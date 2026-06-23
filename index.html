@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude-UI - Standard for Generative UI</title>
+  <meta name="description" content="An open alternative for Generative UI rendering, streaming interfaces, and component schemas.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <h1 class="brand-title">
+            Claude-UI
+            <span class="brand-dot"></span>
+          </h1>
+          <span class="brand-subtitle">Standard for Generative UI</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <button class="menu-btn active" data-view="chat">
+          <!-- Message Chat Icon -->
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Chat Sessions
+        </button>
+        
+        <button class="menu-btn" data-view="artifacts">
+          <!-- Document Gallery Icon -->
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Artifacts Library
+        </button>
+        
+        <button class="menu-btn" data-view="settings">
+          <!-- Settings Icon -->
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Connectors & Settings
+        </button>
+      </nav>
+      
+      <div class="sidebar-divider"></div>
+      
+      <div class="sidebar-section-title">Recent Generations</div>
+      <div class="sidebar-recents scroller">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">D</div>
+          <div class="user-info">
+            <span class="user-name">Local Developer</span>
+            <span class="user-role">Offline Sandbox Mode</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Workspace Content Area -->
+    <main class="main-content">
+      
+      <!-- VIEW 1: CHAT DASHBOARD -->
+      <section id="chat-view" class="view-panel active">
+        <div class="chat-container">
+          <div class="chat-header">
+            <h2 class="chat-header-title">Generative UI Workspace</h2>
+            <div class="chat-header-actions">
+              <span class="meta-badge alert-badge">Streaming Enabled</span>
+            </div>
+          </div>
+          
+          <div class="chat-messages scroller" id="chat-messages">
+            <!-- Welcome screen shown if conversation empty -->
+            <div class="welcome-screen">
+              <div class="welcome-logo">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <h3 class="welcome-title">Generative UI Workspace</h3>
+              <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                Claude-UI parses structured components on-the-fly using a token-efficient streaming specification. Select a template below or write custom prompts.
+              </p>
+              
+              <div class="welcome-suggestions">
+                <div class="suggestion-card" onclick="selectSuggestion('Financial report', 'Create a sales and revenue dashboard report')">
+                  <h4 class="suggestion-title">Financial Report</h4>
+                  <p class="suggestion-desc">Render three metric cards, target completion radial chart, and detailed quarter growth table.</p>
+                </div>
+                <div class="suggestion-card" onclick="selectSuggestion('Weather Forecast', 'Generate a weather summary layout for Tokyo')">
+                  <h4 class="suggestion-title">Weather Widget</h4>
+                  <p class="suggestion-desc">Simulate a live city forecast card with temperature indicator, wind speed, and moisture parameters.</p>
+                </div>
+                <div class="suggestion-card" onclick="selectSuggestion('Project Progress', 'Generate a project checklist for content creation')">
+                  <h4 class="suggestion-title">Task Checklists</h4>
+                  <p class="suggestion-desc">Build an interactive checklists system tracker with clickable items that toggle states.</p>
+                </div>
+                <div class="suggestion-card" onclick="selectSuggestion('Metrics Dashboard', 'Build a summary grid with task status metrics')">
+                  <h4 class="suggestion-title">Metrics Summary Grid</h4>
+                  <p class="suggestion-desc">Build a responsive grid representing active tasks, items done, and efficiency graphs.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-input-panel">
+            <div class="input-box-wrapper">
+              <div class="input-box-meta-bar">
+                <div class="meta-badge">
+                  <!-- Model badge -->
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px; height:12px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                  Sonnet 4.6
+                </div>
+                <div class="meta-badge">
+                  <!-- Repo badge -->
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px; height:12px;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  Select repository...
+                </div>
+                <div class="meta-badge" style="margin-left: auto;">
+                  <span style="width:6px; height:6px; border-radius:50%; background-color:#10b981; display:inline-block;"></span>
+                  Local standard up to date
+                </div>
+              </div>
+              
+              <div class="input-row">
+                <textarea class="chat-input-field" placeholder="Describe a task or ask to generate a UI component..."></textarea>
+                <button class="send-button" title="Send Prompt">
+                  <!-- Arrow Up -->
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="12" y1="19" x2="12" y2="5"/>
+                    <polyline points="5 12 12 5 19 12"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="input-footer-bar">
+                <div class="input-model-info">
+                  <span>Standard: <strong>GUIM v1.0</strong> (Token savings: ~67% vs JSON)</span>
+                </div>
+                <span>Press Enter to send</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- VIEW 2: ARTIFACTS GALLERY -->
+      <section id="artifacts-view" class="view-panel">
+        <div class="artifacts-container">
+          <div class="artifacts-header">
+            <div class="artifacts-title-area">
+              <h2 class="artifacts-title">Artifacts Library</h2>
+              <span class="artifacts-subtitle">Browse and export generated interface components</span>
+            </div>
+            
+            <div class="artifacts-search-bar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="artifacts-search-input" placeholder="Search artifacts..." oninput="filterArtifacts()">
+            </div>
+            
+            <button class="new-artifact-btn" onclick="switchView('chat')">Create New +</button>
+          </div>
+          
+          <div class="artifacts-grid scroller">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </div>
+      </section>
+      
+      <!-- VIEW 3: SETTINGS & SCHEMAS -->
+      <section id="settings-view" class="view-panel">
+        <div class="settings-container">
+          <!-- Internal sidebar settings -->
+          <div class="settings-sidebar">
+            <h3 class="settings-sidebar-title">Configuration</h3>
+            <button class="settings-tab-btn active" data-settings-tab="connectors">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Connectors
+            </button>
+            <button class="settings-tab-btn" data-settings-tab="schemas">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2 12 12"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              Schemas Registry
+            </button>
+            <button class="settings-tab-btn" data-settings-tab="general">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+              General Settings
+            </button>
+          </div>
+          
+          <div class="settings-content scroller">
+            
+            <!-- Tab: Connectors (Matches Slide 1 & 2 design) -->
+            <div class="settings-section active" id="settings-connectors">
+              <div class="settings-section-header">
+                <h3 class="settings-section-title">Connectors</h3>
+                <span class="meta-badge">4 Registered</span>
+              </div>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                Connectors feed contextual API data back into the LLM context. When tools are queried, matching schema properties are loaded automatically.
+              </p>
+              
+              <table class="connectors-table">
+                <thead>
+                  <tr>
+                    <th>Connector</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Rendered dynamically by app.js -->
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Tab: Schemas -->
+            <div class="settings-section" id="settings-schemas">
+              <div class="settings-section-header">
+                <h3 class="settings-section-title">Component Schemas</h3>
+                <span class="meta-badge">JSON-Schema</span>
+              </div>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                Define Zod / JSON schemas. The schema constraints are automatically bundled into the AI system prompts, ensuring correct parameter generation.
+              </p>
+              
+              <!-- Form to register new schema -->
+              <form class="schema-form" id="new-schema-form">
+                <h4 style="font-size: 0.9rem; font-weight: 600;">Register Component Schema</h4>
+                
+                <div class="form-group">
+                  <label class="form-label" for="schema-name">Component Name</label>
+                  <input type="text" class="form-input" id="schema-name" placeholder="e.g. Sales Funnel Chart" required>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="schema-desc">Description (System guidelines)</label>
+                  <textarea class="form-textarea" id="schema-desc" placeholder="Explain to the AI model when and how this component should be used..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="schema-code">Schema structure (JSON/Zod)</label>
+                  <textarea class="form-textarea" id="schema-code" style="font-family: var(--font-mono); font-size: 0.75rem;" placeholder='{\n  "label": "string",\n  "percentage": "number"\n}' required></textarea>
+                </div>
+                
+                <button type="submit" class="new-artifact-btn" style="width: max-content; align-self: flex-end;">Save Component Schema</button>
+              </form>
+              
+              <h4 style="font-size: 0.95rem; font-weight: 600; margin-top: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Registered Component Standards</h4>
+              <div class="schema-list-container">
+                <!-- Rendered dynamically by app.js -->
+              </div>
+            </div>
+            
+            <!-- Tab: General Settings -->
+            <div class="settings-section" id="settings-general">
+              <div class="settings-section-header">
+                <h3 class="settings-section-title">General Configuration</h3>
+              </div>
+              
+              <div style="display:flex; flex-direction:column; gap:1.25rem; margin-top: 0.5rem;">
+                <div class="form-group">
+                  <label class="form-label">Active Spec Language</label>
+                  <select class="form-input" style="background-color: var(--bg-secondary);">
+                    <option value="guim">Generative UI Markup (GUIM v1.0)</option>
+                    <option value="json">Raw JSON Schemas (standard)</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Rendering Mode</label>
+                  <select class="form-input" style="background-color: var(--bg-secondary);">
+                    <option value="canvas">Web Components Canvas</option>
+                    <option value="iframe">Isolated Iframe sandbox</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Streaming Response Speed</label>
+                  <select class="form-input" style="background-color: var(--bg-secondary);">
+                    <option value="15">Normal (15ms delay)</option>
+                    <option value="5">Hyper (5ms delay)</option>
+                    <option value="0">Instant (No delay)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+      
+      <!-- SLIDING DETAIL INSPECTOR SHEET (PULL-OUT DRAWER) -->
+      <aside class="detail-pane" id="artifact-detail-pane">
+        <div class="detail-header">
+          <h3 class="detail-header-title" id="detail-title">
+            Artifact Details
+          </h3>
+          <button class="detail-close-btn" title="Close inspector">
+            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="detail-body">
+          <nav class="detail-tabs">
+            <button class="detail-tab active" data-detail-tab="preview">Live Canvas</button>
+            <button class="detail-tab" data-detail-tab="markup">Raw Markup (GUIM)</button>
+            <button class="detail-tab" data-detail-tab="react">React Code</button>
+            <button class="detail-tab" data-detail-tab="html">HTML Output</button>
+          </nav>
+          
+          <!-- Tab Panel 1: Live Preview -->
+          <div class="detail-tab-content active" id="detail-tab-preview">
+            <div class="detail-preview-panel" id="detail-preview-content">
+              <!-- Rendered parsed element dynamically -->
+            </div>
+          </div>
+          
+          <!-- Tab Panel 2, 3, 4: Code views -->
+          <div class="detail-tab-content" id="detail-tab-markup">
+            <div class="detail-code-panel">
+              <button class="code-copy-btn">Copy</button>
+              <pre><code id="detail-code-content" style="white-space: pre-wrap; font-family: var(--font-mono); font-size:0.8rem;"></code></pre>
+            </div>
+          </div>
+          <div class="detail-tab-content" id="detail-tab-react">
+            <!-- Shared code pane container target -->
+          </div>
+          <div class="detail-tab-content" id="detail-tab-html">
+            <!-- Shared code pane container target -->
+          </div>
+        </div>
+      </aside>
+      
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="parser.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
