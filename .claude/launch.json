@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "claude-ui",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "8743", "/Users/malva/Desktop/claude-ui"],
+      "port": 8743
+    }
+  ]
+}
