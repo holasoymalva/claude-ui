@@ -1,22 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* --- Design Tokens --- */
 :root {
-  --bg-primary: #141414;      /* Deep dark background */
-  --bg-secondary: #1a1a1a;    /* Panel/Sidebar background */
-  --bg-tertiary: #222222;     /* Card background */
-  --bg-active: #2b2b2b;       /* Active list items/hover state */
-  --bg-input: #1e1e1e;        /* Search & input boxes */
-  --border-color: #2b2b2b;    /* Clean subtle dividers */
-  --border-active: #3b82f6;   /* Sky blue active selector from Slide 1 */
-  --border-hover: #404040;
-  --text-primary: #e5e5e5;    /* Crisp primary text */
-  --text-secondary: #a3a3a3;  /* Informative secondary text */
-  --text-muted: #6b7280;      /* Inactive/placeholder text */
-  --accent-color: #e06c35;    /* Warm orange accent */
-  --accent-hover: #f07d47;
-  --accent-bg: rgba(224, 108, 53, 0.1);
-  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --bg-primary: #1c1917;      /* Warm dark, stone-950 */
+  --bg-secondary: #242120;    /* Warm dark panel */
+  --bg-tertiary: #2e2b29;     /* Card background */
+  --bg-active: #3a3836;       /* Active list items/hover state */
+  --bg-input: #211f1d;        /* Search & input boxes */
+  --border-color: #3a3836;    /* Warm subtle dividers */
+  --border-active: #d97706;   /* Amber active selector */
+  --border-hover: #4a4846;
+  --text-primary: #e8e6e3;    /* Slightly warm white */
+  --text-secondary: #a8a29e;  /* Warm secondary text */
+  --text-muted: #78716c;      /* Warm muted text */
+  --accent-color: #d97706;    /* Amber-600, fiel a Claude */
+  --accent-hover: #f59e0b;
+  --accent-bg: rgba(217, 119, 6, 0.1);
+  --font-sans: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.5);
@@ -38,7 +38,7 @@ body {
   color: var(--text-primary);
   height: 100vh;
   overflow: hidden;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -414,7 +414,6 @@ a {
 /* Chat bubble styling */
 .message-bubble {
   display: flex;
-  gap: 1rem;
   max-width: 100%;
   animation: fadeIn 0.3s ease;
 }
@@ -424,46 +423,54 @@ a {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.message-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+/* User messages: pill right-aligned, sin avatar */
+.message-bubble.user {
+  justify-content: flex-end;
+}
+
+.message-user-pill {
+  max-width: 72%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 18px 18px 4px 18px;
+  padding: 0.75rem 1.1rem;
+}
+
+/* Assistant messages: logomark izquierda + texto limpio */
+.message-bubble.assistant {
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.message-avatar.assistant {
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.message-avatar.user {
-  background-color: var(--bg-tertiary);
-  color: var(--text-secondary);
-}
-
-.message-avatar.assistant {
-  background-color: var(--accent-bg);
   color: var(--accent-color);
-  border: 1px solid var(--accent-color);
+  margin-top: 2px;
 }
 
 .message-content-wrapper {
-  flex-grow: 1;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
+/* sender label oculto — posición y avatar ya lo comunican */
 .message-sender {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+  display: none;
 }
 
 .message-body {
   font-size: 0.95rem;
   color: var(--text-primary);
   word-break: break-word;
+  line-height: 1.65;
 }
 
 .message-body p {

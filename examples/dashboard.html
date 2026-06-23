@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude-UI — Dashboard Example</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body {
+      overflow-y: auto;
+      height: auto;
+      padding: 2.5rem;
+    }
+
+    .example-page {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    /* Page header */
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .page-header-top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .page-badge {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background-color: var(--accent-bg);
+      color: var(--accent-color);
+      border: 1px solid var(--accent-color);
+      font-weight: 600;
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Each example block */
+    .example-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .example-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .example-label-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .example-label-line {
+      flex: 1;
+      height: 1px;
+      background-color: var(--border-color);
+    }
+
+    .example-markup {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .example-markup .tag    { color: var(--accent-color); }
+    .example-markup .attr   { color: #7dd3fc; }
+    .example-markup .value  { color: #86efac; }
+
+    .example-render {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    /* GUIM Spec reference table */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .spec-table th {
+      text-align: left;
+      padding: 0.6rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .spec-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    .spec-table td:first-child {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-color);
+      white-space: nowrap;
+    }
+
+    .spec-table tr:last-child td {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="example-page">
+
+    <!-- Page header -->
+    <header class="page-header">
+      <div class="page-header-top">
+        <svg viewBox="0 0 100 100" width="22" height="22" fill="currentColor" style="color: var(--accent-color);" aria-hidden="true">
+          <g transform="translate(50,50)">
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(0)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(45)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(90)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(135)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(180)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(225)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(270)"/>
+            <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(315)"/>
+          </g>
+        </svg>
+        <h1 class="page-title">Claude-UI — Component Examples</h1>
+        <span class="page-badge">GUIM v1.0</span>
+      </div>
+      <p class="page-subtitle">
+        Each block shows the GUIM markup on the left and the live-rendered output below it.
+        All components use the same parser and design tokens as the main workspace.
+      </p>
+    </header>
+
+    <!-- 1. Metrics Grid -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Metrics Grid</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for metrics grid"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Q3 Performance"</span><span class="tag">]</span>
+  <span class="tag">[grid</span> <span class="attr">columns</span>=<span class="value">"3"</span><span class="tag">]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"Revenue"</span>    <span class="attr">value</span>=<span class="value">"$84,200"</span> <span class="attr">trend</span>=<span class="value">"+18%"</span>  <span class="tag">/]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"New Users"</span>  <span class="attr">value</span>=<span class="value">"1,430"</span>   <span class="attr">trend</span>=<span class="value">"+6%"</span>   <span class="tag">/]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"Churn Rate"</span> <span class="attr">value</span>=<span class="value">"0.8%"</span>    <span class="attr">trend</span>=<span class="value">"down"</span>  <span class="tag">/]</span>
+  <span class="tag">[/grid]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-metrics"></div>
+    </section>
+
+    <!-- 2. Bar + Pie Charts -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Charts</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for charts"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Capacity & Budget"</span><span class="tag">]</span>
+  <span class="tag">[grid</span> <span class="attr">columns</span>=<span class="value">"2"</span><span class="tag">]</span>
+    <span class="tag">[chart</span> <span class="attr">type</span>=<span class="value">"bar"</span> <span class="attr">data</span>=<span class="value">"72"</span> <span class="attr">label</span>=<span class="value">"Server Capacity Used"</span>   <span class="tag">/]</span>
+    <span class="tag">[chart</span> <span class="attr">type</span>=<span class="value">"pie"</span> <span class="attr">data</span>=<span class="value">"61"</span> <span class="attr">label</span>=<span class="value">"Budget Consumed (Q3)"</span>    <span class="tag">/]</span>
+  <span class="tag">[/grid]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-charts"></div>
+    </section>
+
+    <!-- 3. Table -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Data Table</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for table"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Monthly Sales Breakdown"</span><span class="tag">]</span>
+  <span class="tag">[table</span>
+    <span class="attr">headers</span>=<span class="value">"Month, Revenue, Growth, Status"</span>
+    <span class="attr">rows</span>=<span class="value">"January,$62K,+4%,On track;February,$68K,+9%,Ahead;March,$71K,+5%,On track;April,$84K,+18%,Exceeded"</span>
+  <span class="tag">/]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-table"></div>
+    </section>
+
+    <!-- 4. Task Tracker -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Task Tracker</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for task tracker"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Sprint 14 Checklist"</span><span class="tag">]</span>
+  <span class="tag">[tasktracker</span> <span class="attr">tasks</span>=<span class="value">"Design token audit, Update color palette to warm-dark, Swap Outfit → Inter font, Restyle chat bubbles, Add Claude logomark SVG, Write examples page"</span> <span class="tag">/]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-tasks"></div>
+    </section>
+
+    <!-- 5. Weather -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Weather Widget</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for weather"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Live Weather"</span><span class="tag">]</span>
+  <span class="tag">[grid</span> <span class="attr">columns</span>=<span class="value">"2"</span><span class="tag">]</span>
+    <span class="tag">[weather</span> <span class="attr">city</span>=<span class="value">"Mexico City"</span> <span class="attr">temp</span>=<span class="value">"22"</span> <span class="attr">condition</span>=<span class="value">"Partly Cloudy"</span> <span class="tag">/]</span>
+    <span class="tag">[weather</span> <span class="attr">city</span>=<span class="value">"Tokyo, JP"</span>    <span class="attr">temp</span>=<span class="value">"29"</span> <span class="attr">condition</span>=<span class="value">"Clear"</span>          <span class="tag">/]</span>
+  <span class="tag">[/grid]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-weather"></div>
+    </section>
+
+    <!-- 6. Buttons & Lists -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Buttons & Lists</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for buttons and lists"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Actions & Highlights"</span><span class="tag">]</span>
+  <span class="tag">[list]</span>
+    <span class="tag">[listitem</span> <span class="attr">text</span>=<span class="value">"GUIM uses ~67% fewer tokens than equivalent JSON schemas"</span> <span class="tag">/]</span>
+    <span class="tag">[listitem</span> <span class="attr">text</span>=<span class="value">"Streaming parser compiles components token-by-token in real time"</span> <span class="tag">/]</span>
+    <span class="tag">[listitem</span> <span class="attr">text</span>=<span class="value">"Drop-in compatible with any LLM that can follow a system prompt"</span> <span class="tag">/]</span>
+  <span class="tag">[/list]</span>
+  <span class="tag">[grid</span> <span class="attr">columns</span>=<span class="value">"2"</span><span class="tag">]</span>
+    <span class="tag">[button</span> <span class="attr">label</span>=<span class="value">"Get Started"</span>    <span class="attr">variant</span>=<span class="value">"primary"</span>   <span class="tag">/]</span>
+    <span class="tag">[button</span> <span class="attr">label</span>=<span class="value">"View Schemas"</span>  <span class="attr">variant</span>=<span class="value">"secondary"</span> <span class="tag">/]</span>
+  <span class="tag">[/grid]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-actions"></div>
+    </section>
+
+    <!-- 7. Full kitchen sink dashboard -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">Full Dashboard — Kitchen Sink</span>
+        <span class="example-label-line"></span>
+      </div>
+      <pre class="example-markup" aria-label="GUIM markup for full dashboard"><span class="tag">[card</span> <span class="attr">title</span>=<span class="value">"Infrastructure Overview"</span> <span class="attr">width</span>=<span class="value">"full"</span><span class="tag">]</span>
+  <span class="tag">[grid</span> <span class="attr">columns</span>=<span class="value">"4"</span><span class="tag">]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"CPU Load"</span>    <span class="attr">value</span>=<span class="value">"38%"</span>   <span class="attr">trend</span>=<span class="value">"down"</span>  <span class="tag">/]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"Memory"</span>     <span class="attr">value</span>=<span class="value">"14.2 GB"</span> <span class="attr">trend</span>=<span class="value">"up"</span>    <span class="tag">/]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"Latency"</span>    <span class="attr">value</span>=<span class="value">"9 ms"</span>   <span class="attr">trend</span>=<span class="value">"down"</span>  <span class="tag">/]</span>
+    <span class="tag">[metric</span> <span class="attr">label</span>=<span class="value">"Uptime"</span>     <span class="attr">value</span>=<span class="value">"99.97%"</span> <span class="attr">trend</span>=<span class="value">"+0.01%"</span> <span class="tag">/]</span>
+  <span class="tag">[/grid]</span>
+  <span class="tag">[grid</span> <span class="attr">columns</span>=<span class="value">"2"</span><span class="tag">]</span>
+    <span class="tag">[chart</span> <span class="attr">type</span>=<span class="value">"bar"</span> <span class="attr">data</span>=<span class="value">"38"</span> <span class="attr">label</span>=<span class="value">"CPU Utilisation"</span>    <span class="tag">/]</span>
+    <span class="tag">[chart</span> <span class="attr">type</span>=<span class="value">"pie"</span> <span class="attr">data</span>=<span class="value">"55"</span> <span class="attr">label</span>=<span class="value">"Storage Used (550 GB)"</span> <span class="tag">/]</span>
+  <span class="tag">[/grid]</span>
+  <span class="tag">[table</span>
+    <span class="attr">headers</span>=<span class="value">"Service, Region, Status, Latency"</span>
+    <span class="attr">rows</span>=<span class="value">"API Gateway,us-east-1,Healthy,8ms;Auth Service,eu-west-1,Healthy,12ms;ML Inference,ap-south-1,Degraded,340ms;Storage,us-west-2,Healthy,5ms"</span>
+  <span class="tag">/]</span>
+  <span class="tag">[button</span> <span class="attr">label</span>=<span class="value">"Open Full Report"</span> <span class="attr">variant</span>=<span class="value">"primary"</span> <span class="tag">/]</span>
+<span class="tag">[/card]</span></pre>
+      <div class="example-render" id="render-dashboard"></div>
+    </section>
+
+    <!-- GUIM Spec Reference -->
+    <section class="example-block">
+      <div class="example-label">
+        <span class="example-label-title">GUIM Spec Reference</span>
+        <span class="example-label-line"></span>
+      </div>
+      <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden;">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>Tag</th>
+              <th>Required attrs</th>
+              <th>Optional attrs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>[card]</td>
+              <td style="color:var(--text-muted)">—</td>
+              <td>title, width="full"</td>
+            </tr>
+            <tr>
+              <td>[grid]</td>
+              <td style="color:var(--text-muted)">—</td>
+              <td>columns (default 2)</td>
+            </tr>
+            <tr>
+              <td>[metric /]</td>
+              <td>label, value</td>
+              <td>trend ("+X%" · "up" · "down")</td>
+            </tr>
+            <tr>
+              <td>[chart /]</td>
+              <td>type, data (0–100)</td>
+              <td>label</td>
+            </tr>
+            <tr>
+              <td>[table /]</td>
+              <td>headers, rows</td>
+              <td>— (rows separated by ";")</td>
+            </tr>
+            <tr>
+              <td>[tasktracker /]</td>
+              <td>tasks</td>
+              <td>— (tasks separated by ",")</td>
+            </tr>
+            <tr>
+              <td>[weather /]</td>
+              <td>city, temp</td>
+              <td>condition</td>
+            </tr>
+            <tr>
+              <td>[list] [listitem /]</td>
+              <td>listitem: text</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>[button /]</td>
+              <td>label</td>
+              <td>variant ("primary" · "secondary")</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div><!-- end .example-page -->
+
+  <script src="../parser.js"></script>
+  <script>
+    const RENDERS = [
+      {
+        id: 'render-metrics',
+        markup: `[card title="Q3 Performance"][grid columns="3"][metric label="Revenue" value="$84,200" trend="+18%" /][metric label="New Users" value="1,430" trend="+6%" /][metric label="Churn Rate" value="0.8%" trend="down" /][/grid][/card]`
+      },
+      {
+        id: 'render-charts',
+        markup: `[card title="Capacity & Budget"][grid columns="2"][chart type="bar" data="72" label="Server Capacity Used" /][chart type="pie" data="61" label="Budget Consumed (Q3)" /][/grid][/card]`
+      },
+      {
+        id: 'render-table',
+        markup: `[card title="Monthly Sales Breakdown"][table headers="Month, Revenue, Growth, Status" rows="January,$62K,+4%,On track;February,$68K,+9%,Ahead;March,$71K,+5%,On track;April,$84K,+18%,Exceeded" /][/card]`
+      },
+      {
+        id: 'render-tasks',
+        markup: `[card title="Sprint 14 Checklist"][tasktracker tasks="Design token audit, Update color palette to warm-dark, Swap Outfit → Inter font, Restyle chat bubbles, Add Claude logomark SVG, Write examples page" /][/card]`
+      },
+      {
+        id: 'render-weather',
+        markup: `[card title="Live Weather"][grid columns="2"][weather city="Mexico City" temp="22" condition="Partly Cloudy" /][weather city="Tokyo, JP" temp="29" condition="Clear" /][/grid][/card]`
+      },
+      {
+        id: 'render-actions',
+        markup: `[card title="Actions & Highlights"][list][listitem text="GUIM uses ~67% fewer tokens than equivalent JSON schemas" /][listitem text="Streaming parser compiles components token-by-token in real time" /][listitem text="Drop-in compatible with any LLM that can follow a system prompt" /][/list][grid columns="2"][button label="Get Started" variant="primary" /][button label="View Schemas" variant="secondary" /][/grid][/card]`
+      },
+      {
+        id: 'render-dashboard',
+        markup: `[card title="Infrastructure Overview" width="full"][grid columns="4"][metric label="CPU Load" value="38%" trend="down" /][metric label="Memory" value="14.2 GB" trend="up" /][metric label="Latency" value="9 ms" trend="down" /][metric label="Uptime" value="99.97%" trend="+0.01%" /][/grid][grid columns="2"][chart type="bar" data="38" label="CPU Utilisation" /][chart type="pie" data="55" label="Storage Used (550 GB)" /][/grid][table headers="Service, Region, Status, Latency" rows="API Gateway,us-east-1,Healthy,8ms;Auth Service,eu-west-1,Healthy,12ms;ML Inference,ap-south-1,Degraded,340ms;Storage,us-west-2,Healthy,5ms" /][button label="Open Full Report" variant="primary" /][/card]`
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      RENDERS.forEach(({ id, markup }) => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        const node = window.ClaudeUIParser.parseGUIM(markup);
+        target.appendChild(node);
+      });
+    });
+  </script>
+</body>
+</html>

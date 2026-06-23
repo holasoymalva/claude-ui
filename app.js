@@ -442,40 +442,58 @@ window.selectSuggestion = function(title, prompt) {
   }, 600);
 };
 
+const CLAUDE_LOGOMARK = `<svg viewBox="0 0 100 100" width="20" height="20" fill="currentColor" aria-hidden="true">
+  <g transform="translate(50,50)">
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(0)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(45)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(90)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(135)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(180)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(225)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(270)"/>
+    <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(315)"/>
+  </g>
+</svg>`;
+
 // Append message bubble to chat feed
 function appendChatBubble(role, content, embeddedMarkup = null) {
   const feed = document.getElementById('chat-messages');
   if (!feed) return;
-  
+
   const bubble = document.createElement('div');
-  bubble.className = 'message-bubble';
-  
+  bubble.className = `message-bubble ${role}`;
+
   const isUser = role === 'user';
-  
-  bubble.innerHTML = `
-    <div class="message-avatar ${isUser ? 'user' : 'assistant'}">
-      ${isUser ? 'U' : 'AI'}
-    </div>
-    <div class="message-content-wrapper">
-      <div class="message-sender">${isUser ? 'Developer' : 'Open Generative UI Engine'}</div>
-      <div class="message-body">
-        <p>${content}</p>
-        ${embeddedMarkup ? `
-          <div class="embedded-component-container">
-            <div class="embedded-header">
-              <span class="embedded-title">
-                <svg style="width: 14px; height: 14px; color: var(--accent-color)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                Generative UI Card
-                <span class="embedded-badge">GUIM</span>
-              </span>
-              <span class="embedded-view-btn" onclick="openEmbeddedDetail()">View Details</span>
-            </div>
-            <div class="embedded-body"></div>
-          </div>
-        ` : ''}
+
+  if (isUser) {
+    bubble.innerHTML = `
+      <div class="message-user-pill">
+        <div class="message-body"><p>${content}</p></div>
       </div>
-    </div>
-  `;
+    `;
+  } else {
+    bubble.innerHTML = `
+      <div class="message-avatar assistant">${CLAUDE_LOGOMARK}</div>
+      <div class="message-content-wrapper">
+        <div class="message-body">
+          <p>${content}</p>
+          ${embeddedMarkup ? `
+            <div class="embedded-component-container">
+              <div class="embedded-header">
+                <span class="embedded-title">
+                  <svg style="width: 14px; height: 14px; color: var(--accent-color)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                  Generative UI Card
+                  <span class="embedded-badge">GUIM</span>
+                </span>
+                <span class="embedded-view-btn">View Details</span>
+              </div>
+              <div class="embedded-body"></div>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
   
   feed.appendChild(bubble);
   
@@ -540,12 +558,11 @@ function simulateUISystemStream(prompt) {
   
   // Create Assistant streaming placeholder
   const bubble = document.createElement('div');
-  bubble.className = 'message-bubble';
-  
+  bubble.className = 'message-bubble assistant';
+
   bubble.innerHTML = `
-    <div class="message-avatar assistant">AI</div>
+    <div class="message-avatar assistant">${CLAUDE_LOGOMARK}</div>
     <div class="message-content-wrapper">
-      <div class="message-sender">Open Generative UI Engine</div>
       <div class="message-body" style="display:flex; flex-direction:column; gap: 0.75rem;">
         <span class="streaming-indicator">
           <span class="streaming-dot"></span>
