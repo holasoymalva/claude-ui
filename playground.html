@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUIM Playground — Claude-UI</title>
+  <meta name="description" content="Write GUIM markup and see components render live. No install, no build step.">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .pg-topbar {
+      height: 52px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      gap: 1rem;
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+    }
+
+    .pg-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .pg-brand-sep {
+      color: var(--text-muted);
+      font-weight: 300;
+      font-size: 1rem;
+    }
+
+    .pg-brand-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .pg-spacer { flex: 1; }
+
+    .pg-template-select {
+      appearance: none;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-family: var(--font-sans);
+      padding: 0.35rem 1.8rem 0.35rem 0.75rem;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      transition: border-color 0.15s;
+    }
+
+    .pg-template-select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .pg-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid var(--border-color);
+    }
+
+    .pg-btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+
+    .pg-btn-ghost:hover {
+      background: var(--bg-active);
+      color: var(--text-primary);
+    }
+
+    .pg-btn-accent {
+      background: var(--accent-color);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .pg-btn-accent:hover {
+      background: var(--accent-hover);
+    }
+
+    .pg-btn svg { width: 14px; height: 14px; }
+
+    /* ── Split layout ── */
+    .pg-split {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ── Editor pane ── */
+    .pg-pane {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .pg-pane-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      height: 38px;
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      background: var(--bg-primary);
+    }
+
+    .pg-pane-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .pg-pane-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .pg-editor {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      padding: 1.25rem;
+      overflow-y: auto;
+      tab-size: 2;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    .pg-editor::-webkit-scrollbar { width: 6px; }
+    .pg-editor::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+    /* ── Divider ── */
+    .pg-divider {
+      background: var(--border-color);
+      cursor: col-resize;
+      position: relative;
+    }
+
+    .pg-divider::after {
+      content: '';
+      position: absolute;
+      inset: 0 -4px;
+      cursor: col-resize;
+    }
+
+    /* ── Preview pane ── */
+    .pg-preview {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      background: var(--bg-secondary);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    .pg-preview::-webkit-scrollbar { width: 6px; }
+    .pg-preview::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+    .pg-preview-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pg-preview-empty svg { opacity: 0.3; }
+
+    .pg-preview-empty p {
+      font-size: 0.85rem;
+      text-align: center;
+      max-width: 220px;
+      line-height: 1.6;
+    }
+
+    /* ── Error state ── */
+    .pg-error {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #f87171;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Toast ── */
+    .pg-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--bg-active);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.82rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .pg-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .pg-toast-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+    }
+
+    /* ── Token counter badge ── */
+    .token-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .token-badge-count {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    /* ── Mobile: tab mode ── */
+    @media (max-width: 700px) {
+      body { overflow: auto; }
+
+      .pg-split {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1px auto;
+        flex: none;
+      }
+
+      .pg-divider { height: 1px; cursor: row-resize; }
+      .pg-divider::after { inset: -4px 0; cursor: row-resize; }
+
+      .pg-pane { height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="pg-topbar">
+    <a class="pg-brand" href="index.html">
+      <svg viewBox="0 0 100 100" width="16" height="16" fill="currentColor" style="color:var(--accent-color)" aria-hidden="true">
+        <g transform="translate(50,50)">
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(0)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(45)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(90)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(135)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(180)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(225)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(270)"/>
+          <rect x="-6.5" y="-42" width="13" height="26" rx="6.5" transform="rotate(315)"/>
+        </g>
+      </svg>
+      Claude-UI
+      <span class="pg-brand-sep">/</span>
+      <span class="pg-brand-label">Playground</span>
+    </a>
+
+    <div class="pg-spacer"></div>
+
+    <select class="pg-template-select" id="template-select" title="Load a template">
+      <option value="">Templates</option>
+      <option value="dashboard">Infrastructure Dashboard</option>
+      <option value="sales">Sales Report</option>
+      <option value="tasks">Sprint Checklist</option>
+      <option value="weather">Weather Widget</option>
+      <option value="blank">— Blank —</option>
+    </select>
+
+    <button class="pg-btn pg-btn-ghost" id="copy-markup-btn" title="Copy GUIM markup">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      Copy
+    </button>
+
+    <button class="pg-btn pg-btn-accent" id="share-btn" title="Share this playground via URL">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+      Share
+    </button>
+  </header>
+
+  <!-- Split editor / preview -->
+  <div class="pg-split">
+
+    <!-- Left: GUIM editor -->
+    <div class="pg-pane">
+      <div class="pg-pane-header">
+        <span class="pg-pane-title">GUIM Markup</span>
+        <span class="pg-pane-meta" id="token-display">
+          <span class="token-badge">
+            ~<span class="token-badge-count" id="token-count">0</span> tokens
+          </span>
+        </span>
+      </div>
+      <textarea
+        class="pg-editor scroller"
+        id="guim-editor"
+        spellcheck="false"
+        autocorrect="off"
+        autocapitalize="off"
+        placeholder="Start typing GUIM markup..."
+      ></textarea>
+    </div>
+
+    <div class="pg-divider"></div>
+
+    <!-- Right: Live preview -->
+    <div class="pg-pane">
+      <div class="pg-pane-header">
+        <span class="pg-pane-title">Live Preview</span>
+        <span class="pg-pane-meta" id="render-status"></span>
+      </div>
+      <div class="pg-preview scroller" id="guim-preview">
+        <div class="pg-preview-empty" id="preview-empty">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18M9 21V9"/>
+          </svg>
+          <p>Your components will appear here as you type GUIM markup.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="pg-toast" id="toast">
+    <span class="pg-toast-dot"></span>
+    <span id="toast-msg">Link copied to clipboard</span>
+  </div>
+
+  <script src="parser.js"></script>
+  <script>
+    const TEMPLATES = {
+      dashboard: `[card title="Infrastructure Overview"]
+  [grid columns="3"]
+    [metric label="CPU Load"   value="38%"    trend="down"    /]
+    [metric label="Memory"     value="14.2 GB" trend="up"      /]
+    [metric label="Latency"    value="9 ms"   trend="down"    /]
+  [/grid]
+  [grid columns="2"]
+    [chart type="bar" data="38" label="CPU Utilisation"    /]
+    [chart type="pie" data="55" label="Storage Used (55%)" /]
+  [/grid]
+  [table
+    headers="Service, Region, Status, Latency"
+    rows="API Gateway,us-east-1,Healthy,8ms;Auth Service,eu-west-1,Healthy,12ms;ML Inference,ap-south-1,Degraded,340ms;Storage,us-west-2,Healthy,5ms"
+  /]
+  [button label="Open Full Report" variant="primary" /]
+[/card]`,
+
+      sales: `[card title="Q3 Sales Report"]
+  [grid columns="3"]
+    [metric label="Revenue"       value="$84,200" trend="+18%"  /]
+    [metric label="New Customers" value="1,430"   trend="+6%"   /]
+    [metric label="Churn Rate"    value="0.8%"    trend="down"  /]
+  [/grid]
+  [chart type="pie" data="70" label="Target Achieved (70%)" /]
+  [table
+    headers="Month, Revenue, Growth, Status"
+    rows="January,$62K,+4%,On track;February,$68K,+9%,Ahead;March,$71K,+5%,On track;April,$84K,+18%,Exceeded"
+  /]
+  [grid columns="2"]
+    [button label="Export Report"     variant="primary"   /]
+    [button label="Schedule Review"   variant="secondary" /]
+  [/grid]
+[/card]`,
+
+      tasks: `[card title="Sprint 14 — Week 2"]
+  [grid columns="2"]
+    [metric label="Done"       value="8/13"  trend="+3"    /]
+    [metric label="Remaining"  value="5"     trend="down"  /]
+  [/grid]
+  [tasktracker tasks="Design token audit, Update color palette to warm-dark, Swap Outfit → Inter font, Restyle chat bubbles, Add Claude logomark, Write examples page, Build GUIM playground, Publish parser as npm package" /]
+  [button label="Mark Sprint Complete" variant="primary" /]
+[/card]`,
+
+      weather: `[card title="Live Weather Forecast"]
+  [grid columns="2"]
+    [weather city="Mexico City" temp="22" condition="Partly Cloudy" /]
+    [weather city="Tokyo, JP"   temp="29" condition="Clear"          /]
+  [/grid]
+  [grid columns="2"]
+    [metric label="CDMX Humidity" value="68%"     /]
+    [metric label="Tokyo Wind"    value="14 km/h" /]
+  [/grid]
+[/card]`,
+
+      blank: ''
+    };
+
+    const editor   = document.getElementById('guim-editor');
+    const preview  = document.getElementById('guim-preview');
+    const empty    = document.getElementById('preview-empty');
+    const tokenEl  = document.getElementById('token-count');
+    const statusEl = document.getElementById('render-status');
+    const shareBtn = document.getElementById('share-btn');
+    const copyBtn  = document.getElementById('copy-markup-btn');
+    const tmplSel  = document.getElementById('template-select');
+    const toast    = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+
+    let renderTimer = null;
+    let toastTimer  = null;
+
+    function estimateTokens(text) {
+      return Math.ceil(text.length / 4);
+    }
+
+    function showToast(msg) {
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    function render() {
+      const markup = editor.value.trim();
+
+      tokenEl.textContent = estimateTokens(editor.value);
+
+      if (!markup) {
+        empty.style.display = 'flex';
+        const existing = preview.querySelector('.gui-card, .guim-root');
+        if (existing) existing.remove();
+        statusEl.textContent = '';
+        return;
+      }
+
+      empty.style.display = 'none';
+
+      const t0 = performance.now();
+      try {
+        const node = window.ClaudeUIParser.parseGUIM(markup);
+        const old  = preview.querySelector('[data-guim-render]');
+        if (old) old.remove();
+        node.setAttribute('data-guim-render', '');
+        preview.appendChild(node);
+        const ms = Math.round(performance.now() - t0);
+        statusEl.textContent = `rendered in ${ms}ms`;
+      } catch (err) {
+        const errEl = document.createElement('div');
+        errEl.className = 'pg-error';
+        errEl.textContent = `Parse error: ${err.message}`;
+        const old = preview.querySelector('[data-guim-render]');
+        if (old) old.remove();
+        errEl.setAttribute('data-guim-render', '');
+        preview.appendChild(errEl);
+        statusEl.textContent = 'error';
+      }
+    }
+
+    function debouncedRender() {
+      clearTimeout(renderTimer);
+      renderTimer = setTimeout(render, 120);
+    }
+
+    editor.addEventListener('input', debouncedRender);
+
+    editor.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const s = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.value = editor.value.substring(0, s) + '  ' + editor.value.substring(end);
+        editor.selectionStart = editor.selectionEnd = s + 2;
+        debouncedRender();
+      }
+    });
+
+    tmplSel.addEventListener('change', () => {
+      const key = tmplSel.value;
+      if (!key) return;
+      editor.value = TEMPLATES[key] || '';
+      tmplSel.value = '';
+      render();
+    });
+
+    shareBtn.addEventListener('click', () => {
+      const encoded = btoa(unescape(encodeURIComponent(editor.value)));
+      const url = `${location.origin}${location.pathname}#${encoded}`;
+      history.pushState(null, '', `#${encoded}`);
+      navigator.clipboard.writeText(url)
+        .then(() => showToast('Link copied — share it anywhere'))
+        .catch(() => showToast('URL updated in address bar'));
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(editor.value)
+        .then(() => showToast('Markup copied to clipboard'));
+    });
+
+    function loadFromHash() {
+      const hash = location.hash.slice(1);
+      if (!hash) return false;
+      try {
+        const decoded = decodeURIComponent(escape(atob(hash)));
+        editor.value = decoded;
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    const loadedFromHash = loadFromHash();
+    if (!loadedFromHash) {
+      editor.value = TEMPLATES.dashboard;
+    }
+
+    render();
+  </script>
+</body>
+</html>
