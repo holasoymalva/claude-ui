@@ -4,6 +4,8 @@ Claude-UI is an open-source standard and rendering framework for **Generative UI
 
 Featuring a highly polished, developer-centric dark design style, Claude-UI serves as a token-efficient interface between AI agents and users.
 
+<img width="1512" height="860" alt="image" src="https://github.com/user-attachments/assets/7399a508-e87d-40b1-953d-bd72b3a2a50e" />
+
 ---
 
 ## Key Features
